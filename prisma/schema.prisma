@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+
+}
+
+enum PerfilUsuario {
+  ADMIN
+  USUARIO
+}
+
+model User {
+  id              String         @id @default(uuid())
+  nome            String
+  sobrenome       String
+  email           String         @unique
+  password        String
+  telefone        String
+  dataNascimento  DateTime
+  perfil          PerfilUsuario  @default(USUARIO)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("users")
+}
