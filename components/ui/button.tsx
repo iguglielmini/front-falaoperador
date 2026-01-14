@@ -19,11 +19,16 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        tactical: "bg-sand text-navy-dark hover:bg-sand-light border-2 border-sand-dark shadow-lg hover:shadow-sand/30",
+        military: "bg-navy-light text-foreground border-2 border-accent/50 hover:border-accent hover:bg-navy transition-all",
+        command: "bg-gradient-to-r from-sand to-sand-dark text-navy-dark font-bold border-2 border-sand-light hover:from-sand-light hover:to-sand shadow-lg",
+      
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        xl: "h-14 rounded-md px-10 text-lg",
         icon: "size-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
