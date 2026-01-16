@@ -26,6 +26,10 @@ export const swaggerConfig: OpenAPIV3.Document = {
       name: 'Users',
       description: 'Endpoints para gerenciamento de usuários',
     },
+    {
+      name: 'Tarefas',
+      description: 'Endpoints para gerenciamento de tarefas',
+    },
   ],
   paths: {
     '/api/users': {
@@ -319,6 +323,322 @@ export const swaggerConfig: OpenAPIV3.Document = {
         },
       },
     },
+    '/api/tarefas': {
+      get: {
+        tags: ['Tarefas'],
+        summary: 'Listar tarefas',
+        description: 'Retorna lista de tarefas (suas tarefas + tarefas públicas). Admin vê todas.',
+        responses: {
+          '200': {
+            description: 'Lista de tarefas retornada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'array',
+                      items: {
+                        $ref: '#/components/schemas/Tarefa',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ['Tarefas'],
+        summary: 'Criar nova tarefa',
+        description: 'Cria uma nova tarefa associada ao usuário autenticado',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/CreateTarefaInput',
+              },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Tarefa criada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Tarefa',
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Tarefa criada com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Erro de validação',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ValidationError',
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/tarefas/{id}': {
+      get: {
+        tags: ['Tarefas'],
+        summary: 'Buscar tarefa por ID',
+        description: 'Retorna os dados de uma tarefa específica (apenas dono, admin ou se pública)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID da tarefa (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Tarefa encontrada',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Tarefa',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para visualizar esta tarefa',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Tarefa não encontrada',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      put: {
+        tags: ['Tarefas'],
+        summary: 'Atualizar tarefa',
+        description: 'Atualiza uma tarefa existente (apenas dono ou admin)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID da tarefa (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/UpdateTarefaInput',
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Tarefa atualizada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Tarefa',
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Tarefa atualizada com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Erro de validação',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ValidationError',
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para editar esta tarefa',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Tarefa não encontrada',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      delete: {
+        tags: ['Tarefas'],
+        summary: 'Excluir tarefa',
+        description: 'Remove uma tarefa do sistema (apenas dono ou admin)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID da tarefa (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Tarefa excluída com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      nullable: true,
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Tarefa excluída com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para excluir esta tarefa',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Tarefa não encontrada',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -476,6 +796,172 @@ export const swaggerConfig: OpenAPIV3.Document = {
             enum: ['ADMIN', 'USUARIO'],
             description: 'Perfil do usuário',
             example: 'ADMIN',
+          },
+        },
+      },
+      Tarefa: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            format: 'uuid',
+            description: 'ID único da tarefa',
+            example: '123e4567-e89b-12d3-a456-426614174000',
+          },
+          titulo: {
+            type: 'string',
+            description: 'Título da tarefa',
+            example: 'Implementar nova feature',
+          },
+          descricao: {
+            type: 'string',
+            nullable: true,
+            description: 'Descrição detalhada da tarefa',
+            example: 'Implementar sistema de notificações em tempo real',
+          },
+          status: {
+            type: 'string',
+            enum: ['PENDENTE', 'EM_PROGRESSO', 'CONCLUIDA', 'CANCELADA'],
+            description: 'Status atual da tarefa',
+            example: 'PENDENTE',
+          },
+          prioridade: {
+            type: 'string',
+            enum: ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'],
+            description: 'Prioridade da tarefa',
+            example: 'ALTA',
+          },
+          publica: {
+            type: 'boolean',
+            description: 'Se a tarefa é visível para todos',
+            example: false,
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+            description: 'Data de início planejada',
+            example: '2026-01-20T00:00:00.000Z',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+            description: 'Data de término planejada',
+            example: '2026-01-31T00:00:00.000Z',
+          },
+          userId: {
+            type: 'string',
+            format: 'uuid',
+            description: 'ID do usuário criador',
+          },
+          user: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              nome: { type: 'string' },
+              sobrenome: { type: 'string' },
+              email: { type: 'string', format: 'email' },
+            },
+            description: 'Dados do usuário criador',
+          },
+          createdAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data de criação',
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data da última atualização',
+          },
+        },
+      },
+      CreateTarefaInput: {
+        type: 'object',
+        required: ['titulo'],
+        properties: {
+          titulo: {
+            type: 'string',
+            minLength: 3,
+            maxLength: 100,
+            description: 'Título da tarefa',
+            example: 'Implementar nova feature',
+          },
+          descricao: {
+            type: 'string',
+            maxLength: 500,
+            description: 'Descrição detalhada da tarefa',
+            example: 'Implementar sistema de notificações em tempo real',
+          },
+          status: {
+            type: 'string',
+            enum: ['PENDENTE', 'EM_PROGRESSO', 'CONCLUIDA', 'CANCELADA'],
+            default: 'PENDENTE',
+            description: 'Status inicial da tarefa',
+          },
+          prioridade: {
+            type: 'string',
+            enum: ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'],
+            default: 'MEDIA',
+            description: 'Prioridade da tarefa',
+          },
+          publica: {
+            type: 'boolean',
+            default: false,
+            description: 'Se a tarefa será visível para todos',
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date',
+            description: 'Data de início (YYYY-MM-DD)',
+            example: '2026-01-20',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date',
+            description: 'Data de término (YYYY-MM-DD)',
+            example: '2026-01-31',
+          },
+        },
+      },
+      UpdateTarefaInput: {
+        type: 'object',
+        properties: {
+          titulo: {
+            type: 'string',
+            minLength: 3,
+            maxLength: 100,
+            description: 'Título da tarefa',
+          },
+          descricao: {
+            type: 'string',
+            maxLength: 500,
+            description: 'Descrição detalhada da tarefa',
+          },
+          status: {
+            type: 'string',
+            enum: ['PENDENTE', 'EM_PROGRESSO', 'CONCLUIDA', 'CANCELADA'],
+            description: 'Status da tarefa',
+          },
+          prioridade: {
+            type: 'string',
+            enum: ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'],
+            description: 'Prioridade da tarefa',
+          },
+          publica: {
+            type: 'boolean',
+            description: 'Se a tarefa é visível para todos',
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date',
+            description: 'Data de início (YYYY-MM-DD)',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date',
+            description: 'Data de término (YYYY-MM-DD)',
           },
         },
       },

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -117,6 +118,7 @@ export function EditUserModal({
       }
 
       // Sucesso
+      toast.success("Usuário atualizado com sucesso!");
       onOpenChange(false);
       
       if (onUserUpdated) {

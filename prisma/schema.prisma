@@ -16,6 +16,20 @@ enum PerfilUsuario {
   USUARIO
 }
 
+enum StatusTarefa {
+  PENDENTE
+  EM_PROGRESSO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum PrioridadeTarefa {
+  BAIXA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
 model User {
   id              String         @id @default(uuid())
   nome            String
@@ -31,8 +45,26 @@ model User {
   updatedAt       DateTime       @updatedAt
   sessions        Session[]
   accounts        Account[]
+  tarefas         Tarefa[]
 
   @@map("users")
+}
+
+model Tarefa {
+  id          String            @id @default(uuid())
+  titulo      String
+  descricao   String?
+  status      StatusTarefa      @default(PENDENTE)
+  prioridade  PrioridadeTarefa  @default(MEDIA)
+  publica     Boolean           @default(false)
+  dataInicio  DateTime?
+  dataFim     DateTime?
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("tarefas")
 }
 
 model Session {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Users, Mail, Calendar, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { CreateUserModal } from "@/components/users/CreateUserModal";
 import { DeleteUserModal } from "@/components/users/DeleteUserModal";
 import { EditUserModal } from "@/components/users/EditUserModal";
@@ -71,13 +72,14 @@ export default function UsuariosPage() {
         // Atualiza a lista removendo o usuário excluído
         setUsers((prev) => prev.filter((u) => u.id !== deleteModal.user!.id));
         setDeleteModal({ open: false, user: null });
+        toast.success("Usuário excluído com sucesso!");
       } else {
         const result = await response.json();
-        alert(result.error || "Erro ao excluir usuário");
+        toast.error(result.error || "Erro ao excluir usuário");
       }
     } catch (error) {
       console.error("Erro ao excluir usuário:", error);
-      alert("Erro ao excluir usuário");
+      toast.error("Erro ao conectar com o servidor");
     }
   };
 

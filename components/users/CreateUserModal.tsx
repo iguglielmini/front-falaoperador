@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -64,6 +65,7 @@ export function CreateUserModal({ onUserCreated }: CreateUserModalProps) {
       }
 
       // Sucesso
+      toast.success("Usuário criado com sucesso!");
       setOpen(false);
       setFormData({
         nome: "",
