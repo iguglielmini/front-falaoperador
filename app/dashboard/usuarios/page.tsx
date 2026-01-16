@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Users, Mail, Calendar, Pencil, Trash2 } from "lucide-react";
 import { CreateUserModal } from "@/components/users/CreateUserModal";
 import { DeleteUserModal } from "@/components/users/DeleteUserModal";
+import { EditUserModal } from "@/components/users/EditUserModal";
 import { Button } from "@/components/ui/button";
 
 interface User {
@@ -22,6 +23,10 @@ export default function UsuariosPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState<{
+    open: boolean;
+    user: User | null;
+  }>({ open: false, user: null });
+  const [editModal, setEditModal] = useState<{
     open: boolean;
     user: User | null;
   }>({ open: false, user: null });
@@ -47,8 +52,7 @@ export default function UsuariosPage() {
   };
 
   const handleEdit = (user: User) => {
-    // TODO: Implementar modal de edição
-    console.log("Editar usuário:", user);
+    setEditModal({ open: true, user });
   };
 
   const handleDelete = (user: User) => {
@@ -194,6 +198,16 @@ export default function UsuariosPage() {
           </table>
         </div>
       </div>
+
+      {/* Edit User Modal */}
+      {editModal.user && (
+        <EditUserModal
+          user={editModal.user}
+          open={editModal.open}
+          onOpenChange={(open) => setEditModal({ open, user: null })}
+          onUserUpdated={fetchUsers}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.user && (
