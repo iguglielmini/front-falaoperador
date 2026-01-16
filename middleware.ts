@@ -5,16 +5,29 @@ export async function middleware(request: NextRequest) {
 
   const isAuthPage = request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/register");
+  
+  const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
+  
+  // Páginas públicas que não precisam de autenticação
+  const isPublicPage = request.nextUrl.pathname === "/" || 
+    request.nextUrl.pathname.startsWith("/api-docs");
 
+  // Se não está logado
   if (!sessionToken) {
-    if (!isAuthPage) {
+    // Se é uma página pública ou de auth, permite o acesso
+    if (isPublicPage || isAuthPage) {
+      return NextResponse.next();
+    }
+    // Se é uma página protegida (dashboard), redireciona para login
+    if (isDashboard) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next();
   }
 
+  // Se está logado e tentando acessar páginas de login/registro
   if (isAuthPage) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
 
       // Login bem-sucedido
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       setError("Erro ao conectar com o servidor");

@@ -18,74 +18,7 @@ import {
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { Header } from "@/components/layout/Header";
 
-// Sample data for episodes
-const recentEpisodes = [
-  {
-    id: 1,
-    title: "Táticas de Comunicação em Campo",
-    description:
-      "Discutimos as melhores práticas de comunicação durante operações táticas.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=225&fit=crop",
-    duration: "1h 23min",
-  },
-  {
-    id: 2,
-    title: "Equipamentos Essenciais para Airsoft",
-    description:
-      "Review completo dos equipamentos mais importantes para sua loadout.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1547394765-185e1e68f34e?w=400&h=225&fit=crop",
-    duration: "58min",
-  },
-  {
-    id: 3,
-    title: "Estratégias de Equipe em Operações",
-    description: "Como montar e coordenar uma equipe eficiente em campo.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=225&fit=crop",
-    duration: "1h 05min",
-  },
-];
 
-const teamMembers = [
-  {
-    name: "Operador Alpha",
-    role: "Host Principal",
-    image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
-  },
-  {
-    name: "Operador Bravo",
-    role: "Co-Host",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
-  },
-  {
-    name: "Operador Charlie",
-    role: "Produtor",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
-  },
-];
-
-const upcomingEvents = [
-  {
-    date: "15 JAN",
-    title: "Gravação Especial - Operação Delta",
-    type: "Gravação",
-  },
-  {
-    date: "22 JAN",
-    title: "Encontro de Operadores SP",
-    type: "Evento",
-  },
-  {
-    date: "28 JAN",
-    title: "Live com Convidado Especial",
-    type: "Live",
-  },
-];
 export default function Home() {
   return (
     <div className="min-h-screen">

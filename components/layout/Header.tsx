@@ -1,24 +1,12 @@
 'use client';
-
 import { useState } from "react";
 import Link from "next/link";
-// import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Radio, Youtube, Instagram, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// const navLinks = [
-//   { href: "/", label: "Base" },
-//   { href: "/sobre", label: "Briefing" },
-//   { href: "/episodios", label: "Transmissões" },
-//   { href: "/equipe", label: "Operadores" },
-//   { href: "/eventos", label: "Operações" },
-//   { href: "/calendario", label: "Timeline" },
-//   { href: "/contato", label: "Contato" },
-// ];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-//   const location = useLocation();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -40,23 +28,6 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          {/* <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`px-3 py-2 text-xs font-orbitron tracking-wider uppercase transition-all duration-300 hover:text-sand ${
-                  location.pathname === link.href
-                    ? "text-sand border-b-2 border-sand"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav> */}
-
           {/* Social & Admin */}
           <div className="hidden md:flex items-center gap-2">
             <a
@@ -77,7 +48,7 @@ export function Header() {
             </a>
             <Button variant="outline" size="sm" className="ml-2" asChild>
               <Link href="/login">
-                Dashboard
+                Área Administrativa
               </Link>
             </Button>
           </div>
@@ -96,20 +67,6 @@ export function Header() {
       {isOpen && (
         <div className="lg:hidden bg-background border-b border-border animate-fade-in">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
-            {/* {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`px-4 py-3 text-sm font-orbitron tracking-wider uppercase transition-all ${
-                  location.pathname === link.href
-                    ? "text-sand bg-navy-light"
-                    : "text-muted-foreground hover:bg-navy-light hover:text-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))} */}
             <div className="flex items-center gap-4 px-4 py-3 border-t border-border mt-2">
               <a
                 href="https://youtube.com"
@@ -129,7 +86,7 @@ export function Header() {
               </a>
               <Button variant="outline" size="sm" className="ml-auto" asChild>
                 <Link href="/login">
-                  Dashboard
+                  Área Administrativa
                 </Link>
               </Button>
             </div>
