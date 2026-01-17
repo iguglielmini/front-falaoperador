@@ -1,39 +1,31 @@
 "use client";
 
 import { useEffect } from "react";
-import { CheckSquare, Plus, Calendar, User, AlertCircle, Pencil, Trash2, Globe, Lock } from "lucide-react";
+import {
+  CheckSquare,
+  Plus,
+  Calendar,
+  User,
+  AlertCircle,
+  Pencil,
+  Trash2,
+  Globe,
+  Lock,
+  Eye,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CreateTarefaModal } from "@/components/tarefas/CreateTarefaModal";
+import { EditTarefaModal } from "@/components/tarefas/EditTarefaModal";
+import { ViewTarefaModal } from "@/components/tarefas/ViewTarefaModal";
 import { useTarefas } from "@/contexts/TarefasContext";
-
-const statusColors = {
-  PENDENTE: "bg-yellow-500/10 text-yellow-500",
-  EM_PROGRESSO: "bg-blue-500/10 text-blue-500",
-  CONCLUIDA: "bg-green-500/10 text-green-500",
-  CANCELADA: "bg-red-500/10 text-red-500",
-};
-
-const statusLabels = {
-  PENDENTE: "Pendente",
-  EM_PROGRESSO: "Em Progresso",
-  CONCLUIDA: "Concluída",
-  CANCELADA: "Cancelada",
-};
-
-const prioridadeColors = {
-  BAIXA: "bg-gray-500/10 text-gray-500",
-  MEDIA: "bg-blue-500/10 text-blue-500",
-  ALTA: "bg-orange-500/10 text-orange-500",
-  URGENTE: "bg-red-500/10 text-red-500",
-};
-
-const prioridadeLabels = {
-  BAIXA: "Baixa",
-  MEDIA: "Média",
-  ALTA: "Alta",
-  URGENTE: "Urgente",
-};
+import {
+  statusColors,
+  statusLabels,
+  prioridadeColors,
+  prioridadeLabels,
+  formatDate,
+} from "@/lib/utils/tarefa-helpers";
 
 export default function TarefasPage() {
   const { tarefas, loading, fetchTarefas, deleteTarefa } = useTarefas();
@@ -42,12 +34,8 @@ export default function TarefasPage() {
     fetchTarefas();
   }, [fetchTarefas]);
 
-  const handleEdit = (tarefa: typeof tarefas[number]) => {
-    // TODO: Implementar edição
-    toast.info("Edição em desenvolvimento");
-  };
 
-  const handleDelete = async (tarefa: typeof tarefas[number]) => {
+  const handleDelete = async (tarefa: (typeof tarefas)[number]) => {
     if (!confirm(`Deseja realmente excluir a tarefa "${tarefa.titulo}"?`)) {
       return;
     }
@@ -79,11 +67,13 @@ export default function TarefasPage() {
       ) : tarefas.length === 0 ? (
         <div className="bg-card border border-border rounded-lg p-12 text-center">
           <CheckSquare className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Nenhuma tarefa cadastrada</h3>
+          <h3 className="text-xl font-semibold mb-2">
+            Nenhuma tarefa cadastrada
+          </h3>
           <p className="text-muted-foreground mb-6">
             Comece adicionando sua primeira tarefa
           </p>
-          <CreateTarefaModal 
+          <CreateTarefaModal
             trigger={
               <Button variant="outline" className="gap-2">
                 <Plus className="w-4 h-4" />
@@ -120,7 +110,10 @@ export default function TarefasPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {tarefas.map((tarefa) => (
-                  <tr key={tarefa.id} className="hover:bg-muted/30 transition-colors">
+                  <tr
+                    key={tarefa.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-lg bg-sand/20 flex items-center justify-center shrink-0">
@@ -128,7 +121,9 @@ export default function TarefasPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium truncate">{tarefa.titulo}</span>
+                            <span className="font-medium truncate">
+                              {tarefa.titulo}
+                            </span>
                             {tarefa.publica ? (
                               <Globe className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                             ) : (
@@ -146,20 +141,32 @@ export default function TarefasPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          statusColors[tarefa.status as keyof typeof statusColors]
+                          statusColors[
+                            tarefa.status as keyof typeof statusColors
+                          ]
                         }`}
                       >
-                        {statusLabels[tarefa.status as keyof typeof statusLabels]}
+                        {
+                          statusLabels[
+                            tarefa.status as keyof typeof statusLabels
+                          ]
+                        }
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          prioridadeColors[tarefa.prioridade as keyof typeof prioridadeColors]
+                          prioridadeColors[
+                            tarefa.prioridade as keyof typeof prioridadeColors
+                          ]
                         }`}
                       >
                         <AlertCircle className="w-3 h-3" />
-                        {prioridadeLabels[tarefa.prioridade as keyof typeof prioridadeLabels]}
+                        {
+                          prioridadeLabels[
+                            tarefa.prioridade as keyof typeof prioridadeLabels
+                          ]
+                        }
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -174,22 +181,18 @@ export default function TarefasPage() {
                       {tarefa.dataFim ? (
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
-                          {new Date(tarefa.dataFim).toLocaleDateString("pt-BR")}
+                          {formatDate(tarefa.dataFim)}
                         </div>
                       ) : (
-                        <span className="text-muted-foreground/50">Sem prazo</span>
+                        <span className="text-muted-foreground/50">
+                          Sem prazo
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(tarefa)}
-                          className="h-8 w-8"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
+                        <ViewTarefaModal tarefa={tarefa} />
+                        <EditTarefaModal tarefa={tarefa} />
                         <Button
                           variant="ghost"
                           size="icon"
