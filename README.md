@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎯 Fala Operador - Front-end
 
-## Getting Started
+Sistema de gerenciamento de usuários e tarefas desenvolvido com Next.js, Prisma e Better Auth.
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
+[![Prisma](https://img.shields.io/badge/Prisma-7-2D3748)](https://www.prisma.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+
+---
+
+## 🚀 Quick Start
 
 ```bash
+# 1. Clone e instale
+git clone <url-do-repositorio>
+cd front-falaoperador
+npm install
+
+# 2. Configure o banco de dados
+npx prisma migrate dev
+npx prisma generate
+
+# 3. Execute
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Acesse**: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> ⚠️ **Primeira vez?** Leia o [Guia de Setup completo](./docs/SETUP.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📚 Documentação
 
-To learn more about Next.js, take a look at the following resources:
+| Documento | Descrição |
+|-----------|-----------|
+| **[📖 Índice da Documentação](./docs/README.md)** | Portal central da documentação |
+| **[🚀 Guia de Setup](./docs/SETUP.md)** | Instalação e configuração detalhada |
+| **[🔧 Troubleshooting](./docs/TROUBLESHOOTING.md)** | Soluções para problemas comuns |
+| **[🔌 API de Usuários](./docs/API_USERS.md)** | Documentação da API REST |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Recursos
 
-## Deploy on Vercel
+- ✅ **Autenticação completa** com Better Auth
+- ✅ **CRUD de usuários** com validação Zod
+- ✅ **CRUD de tarefas** com status e prioridades
+- ✅ **Dashboard administrativo** responsivo
+- ✅ **API REST documentada** com Swagger
+- ✅ **UI moderna** com Radix UI + Tailwind CSS
+- ✅ **TypeScript** para segurança de tipos
+- ✅ **SQLite + Prisma** para persistência
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Tecnologias
+
+<table>
+  <tr>
+    <td><strong>Framework</strong></td>
+    <td>Next.js 16 (App Router)</td>
+  </tr>
+  <tr>
+    <td><strong>Frontend</strong></td>
+    <td>React 19, TypeScript, Tailwind CSS</td>
+  </tr>
+  <tr>
+    <td><strong>Backend</strong></td>
+    <td>Next.js API Routes, Better Auth</td>
+  </tr>
+  <tr>
+    <td><strong>Banco de Dados</strong></td>
+    <td>SQLite + Prisma ORM</td>
+  </tr>
+  <tr>
+    <td><strong>UI Components</strong></td>
+    <td>Radix UI, Lucide Icons</td>
+  </tr>
+  <tr>
+    <td><strong>Validação</strong></td>
+    <td>Zod</td>
+  </tr>
+</table>
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+front-falaoperador/
+├── app/              # Next.js App Router (páginas + API)
+├── components/       # Componentes React reutilizáveis
+├── lib/              # Utilitários, configs e helpers
+├── prisma/           # Schema e migrações do banco
+├── docs/             # 📚 Documentação completa do projeto
+└── hooks/            # Custom React Hooks
+```
+
+> 📖 Veja a [estrutura completa detalhada](./docs/SETUP.md#-estrutura-do-projeto)
+
+---
+
+## 💻 Scripts Principais
+
+```bash
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build de produção
+npm start            # Executa build de produção
+npx prisma studio    # Interface visual do banco
+npx prisma generate  # Gera Prisma Client (obrigatório!)
+```
+
+> 📖 Veja [todos os scripts disponíveis](./docs/SETUP.md#-scripts-disponíveis)
+
+---
+
+## 🆘 Encontrou um Problema?
+
+Antes de tudo, consulte o **[Guia de Troubleshooting](./docs/TROUBLESHOOTING.md)** com soluções para:
+
+- ❌ Erros do Prisma Client
+- ❌ Problemas de autenticação
+- ❌ Erros de build
+- ❌ Problemas de ambiente
+
+**Não resolveu?** Abra uma [issue no GitHub](../../issues) com detalhes.
+
+---
+
+## 🚀 Deploy
+
+O projeto está otimizado para deploy na **Vercel**:
+
+1. Push para GitHub
+2. Importe na [Vercel](https://vercel.com)
+3. Configure variáveis de ambiente
+4. Deploy! 🎉
+
+> 📖 Veja o [guia completo de deploy](https://nextjs.org/docs/app/building-your-application/deploying)
+
+---
+
+## 📞 Links Úteis
+
+- [Documentação Next.js](https://nextjs.org/docs)
+- [Documentação Prisma](https://www.prisma.io/docs)
+- [Documentação Better Auth](https://better-auth.com/docs)
+- [Documentação Radix UI](https://www.radix-ui.com/docs)
+- [Swagger UI Local](http://localhost:3000/api-docs) (com servidor rodando)
+
+---
+
+## 📄 Licença
+
+Este projeto é privado e de uso interno.
+
+---
+
+<div align="center">
+  
+**[📖 Documentação Completa](./docs/README.md)** • **[🚀 Setup](./docs/SETUP.md)** • **[🔧 Troubleshooting](./docs/TROUBLESHOOTING.md)** • **[🔌 API](./docs/API_USERS.md)**
+
+</div>
