@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PerfilUsuario } from "@/app/generated/prisma/enums";
+import { PerfilUsuario } from "@prisma/client";
 
 interface EditUserModalProps {
   user: {

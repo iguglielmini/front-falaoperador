@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { StatusTarefa, PrioridadeTarefa } from "@/app/generated/prisma/enums";
+import { StatusTarefa, PrioridadeTarefa } from "@prisma/client";
 
 // Schema para criação de tarefa
 export const createTarefaSchema = z.object({

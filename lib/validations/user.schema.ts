@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PerfilUsuario } from "@/app/generated/prisma/enums";
+import { PerfilUsuario } from "@prisma/client";
 
 // Schema para criação de usuário
 export const createUserSchema = z.object({
