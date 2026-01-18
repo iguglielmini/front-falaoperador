@@ -29,9 +29,24 @@ enum PrioridadeTarefa {
   URGENTE
 }
 
+enum CategoriaEvento {
+  PODCAST
+  EVENTO
+  ENTREVISTA
+  LIVE
+  OUTRO
+}
+
+enum VisibilidadeEvento {
+  PUBLICA
+  PRIVADA
+}
+
 model User {
   id              String         @id @default(uuid())
   nome            String
+  eventosCreated  Evento[]              @relation("EventoCriador")
+  eventosParticipando EventoParticipante[]
   sobrenome       String
   email           String         @unique
   password        String
@@ -64,6 +79,42 @@ model Tarefa {
   updatedAt   DateTime          @updatedAt
 
   @@map("tarefas")
+}
+
+model Evento {
+  id              String              @id @default(uuid())
+  titulo          String
+  descricao       String?
+  imagem          String?
+  endereco        String
+  numero          String
+  cep             String
+  latitude        Float?
+  longitude       Float?
+  dataInicio      DateTime
+  dataFim         DateTime
+  criadorId       String
+  criador         User                @relation("EventoCriador", fields: [criadorId], references: [id], onDelete: Cascade)
+  visibilidade    VisibilidadeEvento  @default(PUBLICA)
+  categoria       CategoriaEvento     @default(EVENTO)
+  linkYoutube     String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  participantes   EventoParticipante[]
+
+  @@map("eventos")
+}
+
+model EventoParticipante {
+  id        String   @id @default(uuid())
+  eventoId  String
+  userId    String
+  evento    Evento   @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([eventoId, userId])
+  @@map("evento_participantes")
 }
 
 model Session {

@@ -30,6 +30,10 @@ export const swaggerConfig: OpenAPIV3.Document = {
       name: 'Tarefas',
       description: 'Endpoints para gerenciamento de tarefas',
     },
+    {
+      name: 'Eventos',
+      description: 'Endpoints para gerenciamento de eventos',
+    },
   ],
   paths: {
     '/api/users': {
@@ -639,6 +643,322 @@ export const swaggerConfig: OpenAPIV3.Document = {
         },
       },
     },
+    '/api/eventos': {
+      get: {
+        tags: ['Eventos'],
+        summary: 'Listar eventos',
+        description: 'Retorna lista de eventos (públicos + eventos que participa). Admin vê todos.',
+        responses: {
+          '200': {
+            description: 'Lista de eventos retornada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'array',
+                      items: {
+                        $ref: '#/components/schemas/Evento',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      post: {
+        tags: ['Eventos'],
+        summary: 'Criar novo evento',
+        description: 'Cria um novo evento com upload de imagem e geolocalização automática',
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                $ref: '#/components/schemas/CreateEventoInput',
+              },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Evento criado com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Evento',
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Evento criado com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Erro de validação',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ValidationError',
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/eventos/{id}': {
+      get: {
+        tags: ['Eventos'],
+        summary: 'Buscar evento por ID',
+        description: 'Retorna os dados de um evento específico (apenas criador, participantes, admin ou se público)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID do evento (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Evento encontrado',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Evento',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para visualizar este evento',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Evento não encontrado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      put: {
+        tags: ['Eventos'],
+        summary: 'Atualizar evento',
+        description: 'Atualiza um evento existente (apenas criador ou admin)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID do evento (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                $ref: '#/components/schemas/UpdateEventoInput',
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Evento atualizado com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      $ref: '#/components/schemas/Evento',
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Evento atualizado com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Erro de validação',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/ValidationError',
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para editar este evento',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Evento não encontrado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+      delete: {
+        tags: ['Eventos'],
+        summary: 'Excluir evento',
+        description: 'Remove um evento do sistema (apenas criador ou admin)',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'ID do evento (UUID)',
+            schema: {
+              type: 'string',
+              format: 'uuid',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Evento excluído com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    data: {
+                      type: 'object',
+                      nullable: true,
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Evento excluído com sucesso',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Não autenticado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '403': {
+            description: 'Sem permissão para excluir este evento',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Evento não encontrado',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -962,6 +1282,278 @@ export const swaggerConfig: OpenAPIV3.Document = {
             type: 'string',
             format: 'date',
             description: 'Data de término (YYYY-MM-DD)',
+          },
+        },
+      },
+      Evento: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            format: 'uuid',
+            description: 'ID único do evento',
+            example: '123e4567-e89b-12d3-a456-426614174000',
+          },
+          titulo: {
+            type: 'string',
+            description: 'Título do evento',
+            example: 'Podcast: Tecnologia e Inovação',
+          },
+          descricao: {
+            type: 'string',
+            nullable: true,
+            description: 'Descrição detalhada do evento',
+            example: 'Discussão sobre as últimas tendências em tecnologia',
+          },
+          imagem: {
+            type: 'string',
+            nullable: true,
+            description: 'Caminho da imagem do evento',
+            example: '/uploads/eventos/evento_123.jpg',
+          },
+          endereco: {
+            type: 'string',
+            description: 'Endereço do evento',
+            example: 'Av. Paulista',
+          },
+          numero: {
+            type: 'string',
+            description: 'Número do endereço',
+            example: '1000',
+          },
+          cep: {
+            type: 'string',
+            description: 'CEP do local',
+            example: '01310-100',
+          },
+          latitude: {
+            type: 'number',
+            format: 'float',
+            nullable: true,
+            description: 'Latitude da localização',
+            example: -23.561684,
+          },
+          longitude: {
+            type: 'number',
+            format: 'float',
+            nullable: true,
+            description: 'Longitude da localização',
+            example: -46.655981,
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de início',
+            example: '2026-02-01T19:00:00.000Z',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de término',
+            example: '2026-02-01T22:00:00.000Z',
+          },
+          criadorId: {
+            type: 'string',
+            format: 'uuid',
+            description: 'ID do criador do evento',
+          },
+          criador: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              nome: { type: 'string' },
+              sobrenome: { type: 'string' },
+              email: { type: 'string', format: 'email' },
+            },
+            description: 'Dados do criador',
+          },
+          visibilidade: {
+            type: 'string',
+            enum: ['PUBLICA', 'PRIVADA'],
+            description: 'Visibilidade do evento',
+            example: 'PUBLICA',
+          },
+          categoria: {
+            type: 'string',
+            enum: ['PODCAST', 'EVENTO', 'ENTREVISTA', 'LIVE', 'OUTRO'],
+            description: 'Categoria do evento',
+            example: 'PODCAST',
+          },
+          linkYoutube: {
+            type: 'string',
+            nullable: true,
+            description: 'Link do YouTube relacionado',
+            example: 'https://youtube.com/watch?v=abc123',
+          },
+          participantes: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string', format: 'uuid' },
+                eventoId: { type: 'string', format: 'uuid' },
+                userId: { type: 'string', format: 'uuid' },
+                user: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    nome: { type: 'string' },
+                    sobrenome: { type: 'string' },
+                    email: { type: 'string', format: 'email' },
+                  },
+                },
+                createdAt: { type: 'string', format: 'date-time' },
+              },
+            },
+            description: 'Lista de participantes',
+          },
+          createdAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data de criação',
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data da última atualização',
+          },
+        },
+      },
+      CreateEventoInput: {
+        type: 'object',
+        required: ['titulo', 'endereco', 'numero', 'cep', 'dataInicio', 'dataFim'],
+        properties: {
+          titulo: {
+            type: 'string',
+            minLength: 3,
+            maxLength: 200,
+            description: 'Título do evento',
+            example: 'Podcast: Tecnologia e Inovação',
+          },
+          descricao: {
+            type: 'string',
+            maxLength: 1000,
+            description: 'Descrição detalhada do evento',
+            example: 'Discussão sobre as últimas tendências em tecnologia',
+          },
+          imagem: {
+            type: 'string',
+            format: 'binary',
+            description: 'Arquivo de imagem (JPEG, PNG, WebP - máx 5MB)',
+          },
+          endereco: {
+            type: 'string',
+            description: 'Endereço do evento',
+            example: 'Av. Paulista',
+          },
+          numero: {
+            type: 'string',
+            description: 'Número do endereço',
+            example: '1000',
+          },
+          cep: {
+            type: 'string',
+            pattern: '^[0-9]{5}-?[0-9]{3}$',
+            description: 'CEP do local (com ou sem hífen)',
+            example: '01310-100',
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de início (ISO 8601)',
+            example: '2026-02-01T19:00:00Z',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de término (ISO 8601)',
+            example: '2026-02-01T22:00:00Z',
+          },
+          visibilidade: {
+            type: 'string',
+            enum: ['PUBLICA', 'PRIVADA'],
+            default: 'PUBLICA',
+            description: 'Visibilidade do evento',
+          },
+          categoria: {
+            type: 'string',
+            enum: ['PODCAST', 'EVENTO', 'ENTREVISTA', 'LIVE', 'OUTRO'],
+            default: 'EVENTO',
+            description: 'Categoria do evento',
+          },
+          linkYoutube: {
+            type: 'string',
+            format: 'uri',
+            description: 'Link do YouTube',
+            example: 'https://youtube.com/watch?v=abc123',
+          },
+          participantes: {
+            type: 'string',
+            description: 'Array JSON de IDs de usuários participantes',
+            example: '["uuid1", "uuid2"]',
+          },
+        },
+      },
+      UpdateEventoInput: {
+        type: 'object',
+        properties: {
+          titulo: {
+            type: 'string',
+            minLength: 3,
+            maxLength: 200,
+            description: 'Título do evento',
+          },
+          descricao: {
+            type: 'string',
+            maxLength: 1000,
+            description: 'Descrição detalhada',
+          },
+          imagem: {
+            type: 'string',
+            format: 'binary',
+            description: 'Nova imagem (JPEG, PNG, WebP - máx 5MB)',
+          },
+          endereco: {
+            type: 'string',
+            description: 'Endereço do evento',
+          },
+          numero: {
+            type: 'string',
+            description: 'Número do endereço',
+          },
+          cep: {
+            type: 'string',
+            pattern: '^[0-9]{5}-?[0-9]{3}$',
+            description: 'CEP do local',
+          },
+          dataInicio: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de início',
+          },
+          dataFim: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Data e hora de término',
+          },
+          visibilidade: {
+            type: 'string',
+            enum: ['PUBLICA', 'PRIVADA'],
+            description: 'Visibilidade do evento',
+          },
+          categoria: {
+            type: 'string',
+            enum: ['PODCAST', 'EVENTO', 'ENTREVISTA', 'LIVE', 'OUTRO'],
+            description: 'Categoria do evento',
+          },
+          linkYoutube: {
+            type: 'string',
+            format: 'uri',
+            description: 'Link do YouTube',
+          },
+          participantes: {
+            type: 'string',
+            description: 'Array JSON de IDs de participantes',
           },
         },
       },
