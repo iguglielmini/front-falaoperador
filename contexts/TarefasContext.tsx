@@ -31,7 +31,7 @@ interface CreateTarefaData {
   publica: boolean;
   dataInicio?: string | null;
   dataFim?: string | null;
-  userId: string;
+  userId?: string;
 }
 
 interface TarefasContextData {

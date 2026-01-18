@@ -50,28 +50,43 @@ export async function POST(request: NextRequest) {
     // Hash da senha
     const hashedPassword = await hashPassword(validatedData.password);
 
-    // Criar usuário
-    const user = await prisma.user.create({
-      data: {
-        nome: validatedData.nome,
-        sobrenome: validatedData.sobrenome,
-        email: validatedData.email,
-        password: hashedPassword,
-        telefone: validatedData.telefone,
-        dataNascimento: validatedData.dataNascimento,
-        perfil: validatedData.perfil,
-      },
-      select: {
-        id: true,
-        nome: true,
-        sobrenome: true,
-        email: true,
-        telefone: true,
-        dataNascimento: true,
-        perfil: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    // Criar usuário e conta de autenticação em uma transação
+    const user = await prisma.$transaction(async (tx) => {
+      // Criar usuário
+      const newUser = await tx.user.create({
+        data: {
+          nome: validatedData.nome,
+          sobrenome: validatedData.sobrenome,
+          email: validatedData.email,
+          password: hashedPassword,
+          telefone: validatedData.telefone,
+          dataNascimento: validatedData.dataNascimento,
+          perfil: validatedData.perfil,
+        },
+        select: {
+          id: true,
+          nome: true,
+          sobrenome: true,
+          email: true,
+          telefone: true,
+          dataNascimento: true,
+          perfil: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      // Criar conta de autenticação (Account) para Better Auth
+      await tx.account.create({
+        data: {
+          userId: newUser.id,
+          accountId: newUser.id,
+          providerId: "credential",
+          password: hashedPassword,
+        },
+      });
+
+      return newUser;
     });
 
     return successResponse(user, 201, 'Usuário criado com sucesso');

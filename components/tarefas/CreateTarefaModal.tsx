@@ -82,23 +82,13 @@ export function CreateTarefaModal({ trigger }: CreateTarefaModalProps) {
         dataToSend.dataFim = formData.dataFim;
       }
 
-      const response = await fetch("/api/tarefas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      });
+      // Chamar createTarefa do contexto (ele já faz a chamada à API e atualiza o estado)
+      const novaTarefa = await createTarefa(dataToSend);
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        setError(result.error || "Erro ao criar tarefa");
+      if (!novaTarefa) {
+        setError("Erro ao criar tarefa");
         return;
       }
-
-      // Chamar createTarefa do contexto para atualizar a lista
-      await createTarefa({ ...dataToSend, userId: result.userId });
 
       // Sucesso
       setOpen(false);
