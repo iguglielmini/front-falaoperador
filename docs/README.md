@@ -18,6 +18,14 @@ Bem-vindo à documentação completa do projeto Fala Operador!
   - Problemas de autenticação
   - Problemas de build
 
+### 🏗️ Arquitetura
+
+- **[Arquitetura do Projeto](./ARCHITECTURE.md)**
+  - Estrutura de pastas
+  - Context API e gerenciamento de estado
+  - Padrões e decisões técnicas
+  - Por que Context API?
+
 ### 🔌 API
 
 - **[API de Usuários](./API_USERS.md)**
@@ -26,9 +34,28 @@ Bem-vindo à documentação completa do projeto Fala Operador!
   - Exemplos de requisições
   - Schemas e validações
 
-### 📋 Próximas Documentações (Planejadas)
+- **[API de Tarefas](./API_TAREFAS.md)**
+  - CRUD completo de tarefas
+  - Status e prioridades
+  - Filtros e permissões
+  - Exemplos práticos
 
-- **API de Tarefas** - CRUD completo de tarefas
+- **[API de Eventos](./API_EVENTOS.md)**
+  - CRUD completo de eventos
+  -Entenda a [Arquitetura](./ARCHITECTURE.md) do projeto
+4. Consulte [Troubleshooting](./TROUBLESHOOTING.md) se encontrar problemas
+
+### Desenvolvendo?
+- Leia sobre [Context API](./ARCHITECTURE.md#-context-api---gerenciamento-de-estado)
+- Use as [APIs REST](./API_USERS.md) como referência
+- Acesse `/api-docs` para Swagger interativo
+- Execute `npx prisma studio` para visualizar dados
+
+### Entendendo o Código?
+- [Por que Context API?](./ARCHITECTURE.md#por-que-context-api)
+- [Padrões de Componentização](./ARCHITECTURE.md#-componentização)
+- [Estrutura de API Routes](./ARCHITECTURE.md#-api-routes)
+
 - **Autenticação** - Guia detalhado do Better Auth
 - **Componentes** - Catálogo de componentes UI
 - **Deployment** - Guia de deploy em produção

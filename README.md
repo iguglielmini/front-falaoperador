@@ -37,13 +37,18 @@ npm run dev
 |-----------|-----------|
 | **[📖 Índice da Documentação](./docs/README.md)** | Portal central da documentação |
 | **[🚀 Guia de Setup](./docs/SETUP.md)** | Instalação e configuração detalhada |
+| **[🏗️ Arquitetura](./docs/ARCHITECTURE.md)** | Padrões, Context API e decisões técnicas |
 | **[🔧 Troubleshooting](./docs/TROUBLESHOOTING.md)** | Soluções para problemas comuns |
-| **[🔌 API de Usuários](./docs/API_USERS.md)** | Documentação da API REST |
+| **[🔌 API de Usuários](./docs/API_USERS.md)** | Documentação da API de usuários |
+| **[✅ API de Tarefas](./docs/API_TAREFAS.md)** | Documentação da API de tarefas |
+| **[🎉 API de Eventos](./docs/API_EVENTOS.md)** | Documentação da API de eventos |
 
 ---
 
 ## 🎯 Recursos
 
+- ✅ **CRUD de eventos** com upload de imagens e geolocalização
+- ✅ **Context API** para gerenciamento de estado
 - ✅ **Autenticação completa** com Better Auth
 - ✅ **CRUD de usuários** com validação Zod
 - ✅ **CRUD de tarefas** com status e prioridades
