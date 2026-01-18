@@ -14,6 +14,7 @@ import {
 import { signOut } from "@/lib/auth-client";
 import { TarefasProvider } from "@/contexts/TarefasContext";
 import { UserProvider } from "@/contexts/UserContext";
+import { EventosProvider } from "@/contexts/EventosContext";
 import {
   Sidebar,
   SidebarContent,
@@ -54,7 +55,8 @@ export default function DashboardLayout({
   return (
     <TarefasProvider>
       <UserProvider>
-        <SidebarProvider>
+        <EventosProvider>
+          <SidebarProvider>
           <Sidebar>
             <SidebarHeader>
               <div className="flex items-center gap-3 px-2 py-2">
@@ -123,9 +125,10 @@ export default function DashboardLayout({
               </div>
             </header>
             <div className="flex flex-1 flex-col">{children}</div>
-          </SidebarInset>
-        </SidebarProvider>
-      </UserProvider>
-    </TarefasProvider>
+        </SidebarInset>
+      </SidebarProvider>
+      </EventosProvider>
+    </UserProvider>
+  </TarefasProvider>
   );
 }
