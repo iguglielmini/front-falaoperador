@@ -47,8 +47,8 @@ export function ViewTarefaModal({ tarefa, trigger }: ViewTarefaModalProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <CheckSquare className="w-5 h-5 text-sand" />
             {tarefa.titulo}
@@ -56,7 +56,7 @@ export function ViewTarefaModal({ tarefa, trigger }: ViewTarefaModalProps) {
           <DialogDescription>Detalhes completos da tarefa</DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-6 py-4 overflow-y-auto flex-1">
           {/* Status, Data Início e Data Conclusão */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>

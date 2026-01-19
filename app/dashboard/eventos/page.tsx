@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "lucide-react";
-import { useEventos } from "@/contexts/EventosContext";
+import { useEventos, Evento } from "@/contexts/EventosContext";
 import { EventosTable } from "@/components/eventos/EventosTable";
 import { CreateEventoModal } from "@/components/eventos/CreateEventoModal";
+import { ViewEventoModal } from "@/components/eventos/ViewEventoModal";
 
 export default function EventosPage() {
   const { eventos, loading, fetchEventos, deleteEvento } = useEventos();
+  const [selectedEvento, setSelectedEvento] = useState<Evento | null>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
 
   useEffect(() => {
     fetchEventos();
@@ -22,9 +25,9 @@ export default function EventosPage() {
     console.log("Editar evento:", evento);
   };
 
-  const handleView = (evento: any) => {
-    // TODO: Abrir modal de visualização
-    console.log("Visualizar evento:", evento);
+  const handleView = (evento: Evento) => {
+    setSelectedEvento(evento);
+    setViewModalOpen(true);
   };
 
   return (
@@ -55,6 +58,15 @@ export default function EventosPage() {
           onDelete={handleDelete}
           onEdit={handleEdit}
           onView={handleView}
+        />
+      )}
+
+      {/* View Modal */}
+      {selectedEvento && (
+        <ViewEventoModal
+          evento={selectedEvento}
+          open={viewModalOpen}
+          onOpenChange={setViewModalOpen}
         />
       )}
     </div>

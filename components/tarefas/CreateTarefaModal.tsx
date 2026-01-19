@@ -123,16 +123,16 @@ export function CreateTarefaModal({ trigger }: CreateTarefaModalProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-137.5 max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle>Nova Tarefa</DialogTitle>
           <DialogDescription>
             Preencha os dados para criar uma nova tarefa.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="grid gap-4 py-4 overflow-y-auto flex-1">
             {/* Título */}
             <div className="grid gap-2">
               <Label htmlFor="titulo">Título *</Label>
@@ -272,7 +272,7 @@ export function CreateTarefaModal({ trigger }: CreateTarefaModalProps) {
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0 pt-4 border-t border-border">
             <Button
               type="button"
               variant="outline"
