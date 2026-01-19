@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { UserPlus, AlertCircle } from "lucide-react";
 import { TacticalCard } from "@/components/shared/TaticalCard";
-import { signUp } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -35,20 +35,48 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { data, error: authError } = await signUp.email({
+      // Primeiro criar o usuário na API
+      const userData = {
+        nome: formData.nome,
+        sobrenome: formData.sobrenome,
         email: formData.email,
         password: formData.password,
-        name: `${formData.nome} ${formData.sobrenome}`,
-        callbackURL: "/",
+        telefone: formData.telefone,
+        dataNascimento: formData.dataNascimento,
+        perfil: "USUARIO", // Sempre criar como USUARIO no registro público
+      };
+
+      const userResponse = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
       });
 
-      if (authError) {
-        setError(authError.message || "Erro ao criar conta");
+      if (!userResponse.ok) {
+        const errorData = await userResponse.json();
+        setError(errorData.error || "Erro ao criar conta");
         return;
       }
 
-      // Registro bem-sucedido
-      router.push("/");
+      // Usuário criado com sucesso, agora fazer login automaticamente
+      const { data, error: authError } = await signIn.email({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (authError) {
+        setError("Conta criada com sucesso! Redirecionando para login...");
+        // Aguarda 2 segundos e redireciona para login
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+        return;
+      }
+
+      // Registro e login bem-sucedidos - redireciona para dashboard
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       setError("Erro ao conectar com o servidor");

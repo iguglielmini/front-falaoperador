@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Radio, Lock, AlertCircle } from "lucide-react";
@@ -125,7 +126,16 @@ export default function LoginPage() {
         </form>
 
         {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-border text-center">
+        <div className="mt-8 pt-6 border-t border-border text-center space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Não possui acesso ao sistema?{" "}
+            <Link
+              href="/register"
+              className="text-sand hover:text-sand/80 font-medium transition-colors"
+            >
+              Solicitar Credenciais
+            </Link>
+          </p>
           <p className="text-xs text-muted-foreground font-orbitron tracking-wider">
             SISTEMA PROTEGIDO • FALA OPERADOR
           </p>
