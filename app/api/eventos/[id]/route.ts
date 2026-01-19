@@ -13,7 +13,7 @@ import { saveUploadedFile, validateImageFile } from "@/lib/utils/file-upload";
 // GET - Buscar evento por ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
@@ -22,8 +22,10 @@ export async function GET(
       return errorResponse("Não autenticado", 401);
     }
 
+    const { id } = await params;
+
     const evento = await prisma.evento.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         criador: {
           select: {
@@ -54,7 +56,7 @@ export async function GET(
 
     // Verificar permissão de visualização
     const isParticipante = evento.participantes.some(
-      (p) => p.userId === session.user.id
+      (p) => p.userId === session.user.id,
     );
     const isCriador = evento.criadorId === session.user.id;
     const isAdmin = session.user.perfil === "ADMIN";
@@ -73,7 +75,7 @@ export async function GET(
 // PUT - Atualizar evento
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
@@ -82,9 +84,11 @@ export async function PUT(
       return errorResponse("Não autenticado", 401);
     }
 
+    const { id } = await params;
+
     // Buscar evento existente
     const eventoExistente = await prisma.evento.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!eventoExistente) {
@@ -103,19 +107,28 @@ export async function PUT(
     const formData = await request.formData();
 
     const data: Record<string, string | string[] | null | undefined> = {};
-    
+
     if (formData.has("titulo")) data.titulo = formData.get("titulo") as string;
-    if (formData.has("descricao")) data.descricao = formData.get("descricao") as string | null;
-    if (formData.has("endereco")) data.endereco = formData.get("endereco") as string;
+    if (formData.has("descricao"))
+      data.descricao = formData.get("descricao") as string | null;
+    if (formData.has("endereco"))
+      data.endereco = formData.get("endereco") as string;
     if (formData.has("numero")) data.numero = formData.get("numero") as string;
     if (formData.has("cep")) data.cep = formData.get("cep") as string;
-    if (formData.has("dataInicio")) data.dataInicio = formData.get("dataInicio") as string;
-    if (formData.has("dataFim")) data.dataFim = formData.get("dataFim") as string;
-    if (formData.has("visibilidade")) data.visibilidade = formData.get("visibilidade") as string;
-    if (formData.has("categoria")) data.categoria = formData.get("categoria") as string;
-    if (formData.has("linkYoutube")) data.linkYoutube = formData.get("linkYoutube") as string | null;
+    if (formData.has("dataInicio"))
+      data.dataInicio = formData.get("dataInicio") as string;
+    if (formData.has("dataFim"))
+      data.dataFim = formData.get("dataFim") as string;
+    if (formData.has("visibilidade"))
+      data.visibilidade = formData.get("visibilidade") as string;
+    if (formData.has("categoria"))
+      data.categoria = formData.get("categoria") as string;
+    if (formData.has("linkYoutube"))
+      data.linkYoutube = formData.get("linkYoutube") as string | null;
     if (formData.has("participantes")) {
-      data.participantes = JSON.parse(formData.get("participantes") as string || "[]");
+      data.participantes = JSON.parse(
+        (formData.get("participantes") as string) || "[]",
+      );
     }
 
     // Validar dados
@@ -124,7 +137,7 @@ export async function PUT(
     // Processar nova imagem (se houver)
     let imagemPath = eventoExistente.imagem;
     const imageFile = formData.get("imagem") as File | null;
-    
+
     if (imageFile && imageFile.size > 0) {
       const validation = validateImageFile(imageFile);
       if (!validation.valid) {
@@ -139,24 +152,22 @@ export async function PUT(
 
     // Atualizar coordenadas se endereço mudou
     let coordinates = null;
-    if (
-      validatedData.endereco ||
-      validatedData.numero ||
-      validatedData.cep
-    ) {
+    if (validatedData.endereco || validatedData.numero || validatedData.cep) {
       coordinates = await getCoordinatesFromAddress(
         validatedData.endereco || eventoExistente.endereco,
         validatedData.numero || eventoExistente.numero,
-        validatedData.cep || eventoExistente.cep
+        validatedData.cep || eventoExistente.cep,
       );
     }
 
     // Atualizar evento
     const evento = await prisma.evento.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(validatedData.titulo && { titulo: validatedData.titulo }),
-        ...(validatedData.descricao !== undefined && { descricao: validatedData.descricao }),
+        ...(validatedData.descricao !== undefined && {
+          descricao: validatedData.descricao,
+        }),
         ...(imagemPath && { imagem: imagemPath }),
         ...(validatedData.endereco && { endereco: validatedData.endereco }),
         ...(validatedData.numero && { numero: validatedData.numero }),
@@ -220,7 +231,7 @@ export async function PUT(
 // DELETE - Excluir evento
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
@@ -229,9 +240,11 @@ export async function DELETE(
       return errorResponse("Não autenticado", 401);
     }
 
+    const { id } = await params;
+
     // Buscar evento
     const evento = await prisma.evento.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!evento) {
@@ -248,7 +261,7 @@ export async function DELETE(
 
     // Excluir evento (participantes são excluídos em cascata)
     await prisma.evento.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return successResponse(null, 200, "Evento excluído com sucesso");

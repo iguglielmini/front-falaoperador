@@ -6,11 +6,13 @@ import { useEventos, Evento } from "@/contexts/EventosContext";
 import { EventosTable } from "@/components/eventos/EventosTable";
 import { CreateEventoModal } from "@/components/eventos/CreateEventoModal";
 import { ViewEventoModal } from "@/components/eventos/ViewEventoModal";
+import { EditEventoModal } from "@/components/eventos/EditEventoModal";
 
 export default function EventosPage() {
   const { eventos, loading, fetchEventos, deleteEvento } = useEventos();
   const [selectedEvento, setSelectedEvento] = useState<Evento | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
     fetchEventos();
@@ -20,9 +22,9 @@ export default function EventosPage() {
     await deleteEvento(evento.id);
   };
 
-  const handleEdit = (evento: any) => {
-    // TODO: Abrir modal de edição
-    console.log("Editar evento:", evento);
+  const handleEdit = (evento: Evento) => {
+    setSelectedEvento(evento);
+    setEditModalOpen(true);
   };
 
   const handleView = (evento: Evento) => {
@@ -61,12 +63,21 @@ export default function EventosPage() {
         />
       )}
 
-      {/* View Modal */}
-      {selectedEvento && (
+      {/* View Modal - Hidden, controlled by state */}
+      {selectedEvento && viewModalOpen && (
         <ViewEventoModal
           evento={selectedEvento}
           open={viewModalOpen}
           onOpenChange={setViewModalOpen}
+        />
+      )}
+
+      {/* Edit Modal - Hidden, controlled by state */}
+      {selectedEvento && editModalOpen && (
+        <EditEventoModal
+          evento={selectedEvento}
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
         />
       )}
     </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Calendar, CheckSquare, Clock, TrendingUp } from "lucide-react";
+import { Users, Calendar, CheckSquare, TrendingUp, MapPin } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useTarefas } from "@/contexts/TarefasContext";
+import { useEventos } from "@/contexts/EventosContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -12,31 +13,32 @@ import {
   statusLabels,
   prioridadeColors,
   prioridadeLabels,
-  formatDate,
 } from "@/lib/utils/tarefa-helpers";
+import { categoriaLabels, categoriaColors } from "@/lib/utils/categorias";
+import { formatDateTime, formatDate } from "@/lib/utils/date-format";
 
 interface DashboardStats {
   totalUsuarios: number;
   totalTarefas: number;
-  tarefasPendentes: number;
-  tarefasEmProgresso: number;
-  tarefasConcluidas: number;
+  totalEventos: number;
+  percentualTarefasFinalizadas: number;
 }
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const { tarefas, loading, fetchTarefas } = useTarefas();
+  const { tarefas, loading: loadingTarefas, fetchTarefas } = useTarefas();
+  const { eventos, loading: loadingEventos, fetchEventos } = useEventos();
   const [stats, setStats] = useState<DashboardStats>({
     totalUsuarios: 0,
     totalTarefas: 0,
-    tarefasPendentes: 0,
-    tarefasEmProgresso: 0,
-    tarefasConcluidas: 0,
+    totalEventos: 0,
+    percentualTarefasFinalizadas: 0,
   });
 
   useEffect(() => {
     fetchTarefas();
-  }, [fetchTarefas]);
+    fetchEventos();
+  }, [fetchTarefas, fetchEventos]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -46,16 +48,19 @@ export default function DashboardPage() {
           const result = await response.json();
           const usuarios = result.data || [];
 
+          const tarefasConcluidas = tarefas.filter(
+            (t) => t.status === "CONCLUIDA"
+          ).length;
+          const percentualFinalizadas =
+            tarefas.length > 0
+              ? Math.round((tarefasConcluidas / tarefas.length) * 100)
+              : 0;
+
           setStats({
             totalUsuarios: usuarios.length,
             totalTarefas: tarefas.length,
-            tarefasPendentes: tarefas.filter((t) => t.status === "PENDENTE")
-              .length,
-            tarefasEmProgresso: tarefas.filter(
-              (t) => t.status === "EM_PROGRESSO"
-            ).length,
-            tarefasConcluidas: tarefas.filter((t) => t.status === "CONCLUIDA")
-              .length,
+            totalEventos: eventos.length,
+            percentualTarefasFinalizadas: percentualFinalizadas,
           });
         }
       } catch (error) {
@@ -63,24 +68,24 @@ export default function DashboardPage() {
       }
     };
 
-    if (!loading) {
+    if (!loadingTarefas && !loadingEventos) {
       fetchStats();
     }
-  }, [tarefas, loading]);
+  }, [tarefas, eventos, loadingTarefas, loadingEventos]);
 
-  // Tarefas recentes (últimas 5)
-  const tarefasRecentes = tarefas.slice(0, 5);
+  // Próximos 5 eventos (ordenados por data de início)
+  const proximosEventos = eventos
+    .filter((e) => new Date(e.dataInicio) >= new Date())
+    .sort(
+      (a, b) =>
+        new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime()
+    )
+    .slice(0, 5);
 
-  // Minhas tarefas pendentes
-  const minhasTarefasPendentes = tarefas.filter(
-    (t) => t.userId === user?.id && t.status === "PENDENTE"
-  );
-
-  // Taxa de conclusão
-  const taxaConclusao =
-    stats.totalTarefas > 0
-      ? Math.round((stats.tarefasConcluidas / stats.totalTarefas) * 100)
-      : 0;
+  // Tarefas em progresso ou pendentes
+  const tarefasAtivas = tarefas
+    .filter((t) => t.status === "PENDENTE" || t.status === "EM_PROGRESSO")
+    .slice(0, 5);
 
   return (
     <div className="p-6 lg:p-8">
@@ -92,141 +97,201 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Section 1: Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card className="p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
-              Total Tarefas
+              Total de Usuários
             </span>
-            <CheckSquare className="w-5 h-5 text-blue-500" />
+            <Users className="w-5 h-5 text-purple-500" />
           </div>
-          <p className="text-3xl font-bold mb-1">{stats.totalTarefas}</p>
+          <p className="text-3xl font-bold mb-1">{stats.totalUsuarios}</p>
+          <p className="text-xs text-muted-foreground">Cadastrados no sistema</p>
+        </Card>
+
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Total de Eventos
+            </span>
+            <Calendar className="w-5 h-5 text-blue-500" />
+          </div>
+          <p className="text-3xl font-bold mb-1">{stats.totalEventos}</p>
           <p className="text-xs text-muted-foreground">
-            {stats.tarefasPendentes} pendentes
+            {proximosEventos.length} próximos
           </p>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
-              Em Progresso
+              Total de Tarefas
             </span>
-            <Clock className="w-5 h-5 text-orange-500" />
+            <CheckSquare className="w-5 h-5 text-orange-500" />
           </div>
-          <p className="text-3xl font-bold mb-1">{stats.tarefasEmProgresso}</p>
-          <p className="text-xs text-muted-foreground">Tarefas ativas</p>
+          <p className="text-3xl font-bold mb-1">{stats.totalTarefas}</p>
+          <p className="text-xs text-muted-foreground">
+            {tarefasAtivas.length} ativas
+          </p>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
-              Concluídas
+              Taxa de Conclusão
             </span>
             <TrendingUp className="w-5 h-5 text-green-500" />
           </div>
-          <p className="text-3xl font-bold mb-1">{stats.tarefasConcluidas}</p>
-          <p className="text-xs text-muted-foreground">Taxa: {taxaConclusao}%</p>
+          <p className="text-3xl font-bold mb-1">
+            {stats.percentualTarefasFinalizadas}%
+          </p>
+          <p className="text-xs text-muted-foreground">Tarefas finalizadas</p>
         </Card>
-
-        {user?.perfil === "ADMIN" && (
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                Total Usuários
-              </span>
-              <Users className="w-5 h-5 text-purple-500" />
-            </div>
-            <p className="text-3xl font-bold mb-1">{stats.totalUsuarios}</p>
-            <p className="text-xs text-muted-foreground">Cadastrados</p>
-          </Card>
-        )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Minhas Tarefas Pendentes */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Minhas Tarefas Pendentes</h2>
-            <Link href="/dashboard/tarefas">
-              <Button variant="ghost" size="sm">
-                Ver todas
-              </Button>
-            </Link>
-          </div>
+      {/* Section 2: Próximos Eventos */}
+      <Card className="p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-sand" />
+            Próximos Eventos
+          </h2>
+          <Link href="/dashboard/eventos">
+            <Button variant="ghost" size="sm">
+              Ver todos
+            </Button>
+          </Link>
+        </div>
 
-          {minhasTarefasPendentes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <CheckSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Nenhuma tarefa pendente</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {minhasTarefasPendentes.slice(0, 4).map((tarefa) => (
-                <div
-                  key={tarefa.id}
-                  className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{tarefa.titulo}</p>
-                    <div className="flex items-center gap-2 mt-1">
+        {loadingEventos ? (
+          <div className="text-center py-8 text-muted-foreground">
+            Carregando eventos...
+          </div>
+        ) : proximosEventos.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <p>Nenhum evento próximo</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Título
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Categoria
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Local
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Data
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {proximosEventos.map((evento) => (
+                  <tr
+                    key={evento.id}
+                    className="border-b border-border hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="py-3 px-4">
+                      <p className="font-medium">{evento.titulo}</p>
+                    </td>
+                    <td className="py-3 px-4">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          prioridadeColors[
-                            tarefa.prioridade as keyof typeof prioridadeColors
+                        className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                          categoriaColors[
+                            evento.categoria as keyof typeof categoriaColors
                           ]
                         }`}
                       >
                         {
-                          prioridadeLabels[
-                            tarefa.prioridade as keyof typeof prioridadeLabels
+                          categoriaLabels[
+                            evento.categoria as keyof typeof categoriaLabels
                           ]
                         }
                       </span>
-                      {tarefa.dataFim && (
-                        <span className="text-xs text-muted-foreground">
-                          Prazo: {formatDate(tarefa.dataFim)}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate max-w-50">
+                          {evento.endereco}
                         </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-
-        {/* Atividades Recentes */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Atividades Recentes</h2>
-            <Link href="/dashboard/tarefas">
-              <Button variant="ghost" size="sm">
-                Ver todas
-              </Button>
-            </Link>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <p className="text-sm">{formatDate(evento.dataInicio)}</p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        )}
+      </Card>
 
-          {loading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Carregando...
-            </div>
-          ) : tarefasRecentes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Nenhuma atividade recente</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {tarefasRecentes.map((tarefa) => (
-                <div
-                  key={tarefa.id}
-                  className="flex items-start gap-3 p-3 border border-border rounded-lg"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+      {/* Section 3: Tarefas Ativas (Em Progresso ou Pendente) */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <CheckSquare className="w-5 h-5 text-sand" />
+            Tarefas Ativas (Pendente / Em Progresso)
+          </h2>
+          <Link href="/dashboard/tarefas">
+            <Button variant="ghost" size="sm">
+              Ver todas
+            </Button>
+          </Link>
+        </div>
+
+        {loadingTarefas ? (
+          <div className="text-center py-8 text-muted-foreground">
+            Carregando tarefas...
+          </div>
+        ) : tarefasAtivas.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <CheckSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <p>Nenhuma tarefa ativa</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Título
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Prioridade
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Responsável
+                  </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                    Prazo
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tarefasAtivas.map((tarefa) => (
+                  <tr
+                    key={tarefa.id}
+                    className="border-b border-border hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="py-3 px-4">
+                      <p className="font-medium">{tarefa.titulo}</p>
+                    </td>
+                    <td className="py-3 px-4">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           statusColors[
                             tarefa.status as keyof typeof statusColors
                           ]
@@ -238,48 +303,40 @@ export default function DashboardPage() {
                           ]
                         }
                       </span>
-                    </div>
-                    <p className="font-medium text-sm truncate">
-                      {tarefa.titulo}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {tarefa.user.nome} {tarefa.user.sobrenome}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-      </div>
-
-      {/* Quick Actions */}
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/dashboard/tarefas">
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <CheckSquare className="w-6 h-6" />
-              <span>Gerenciar Tarefas</span>
-            </Button>
-          </Link>
-
-          {user?.perfil === "ADMIN" && (
-            <Link href="/dashboard/usuarios">
-              <Button variant="outline" className="w-full h-20 flex-col gap-2">
-                <Users className="w-6 h-6" />
-                <span>Gerenciar Usuários</span>
-              </Button>
-            </Link>
-          )}
-
-          <Link href="/dashboard/configuracao">
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Users className="w-6 h-6" />
-              <span>Meu Perfil</span>
-            </Button>
-          </Link>
-        </div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          prioridadeColors[
+                            tarefa.prioridade as keyof typeof prioridadeColors
+                          ]
+                        }`}
+                      >
+                        {
+                          prioridadeLabels[
+                            tarefa.prioridade as keyof typeof prioridadeLabels
+                          ]
+                        }
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <p className="text-sm">
+                        {tarefa.user.nome} {tarefa.user.sobrenome}
+                      </p>
+                    </td>
+                    <td className="py-3 px-4">
+                      <p className="text-sm">
+                        {tarefa.dataFim
+                          ? formatDate(tarefa.dataFim)
+                          : "Sem prazo"}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Plus, Calendar, MapPin, Upload, X, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEventos } from "@/contexts/EventosContext";
@@ -256,11 +257,12 @@ export function CreateEventoModal({ trigger }: CreateEventoModalProps) {
           <div className="space-y-2">
             <Label htmlFor="imagem">Imagem do Evento</Label>
             {imagePreview ? (
-              <div className="relative">
-                <img
+              <div className="relative w-full h-48">
+                <Image
                   src={imagePreview}
                   alt="Preview"
-                  className="w-full h-48 object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
                 />
                 <Button
                   type="button"
