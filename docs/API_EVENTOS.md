@@ -126,6 +126,8 @@ POST /api/eventos
 Content-Type: multipart/form-data
 ```
 
+**Implementação**: Esta rota utiliza helper function para processar FormData de forma eficiente e type-safe. Ver [ARCHITECTURE.md](./ARCHITECTURE.md#-processamento-de-formdata) para detalhes.
+
 **Descrição**: Cria um novo evento com upload de imagem e geolocalização automática.
 
 **Body (FormData)**:
@@ -205,6 +207,8 @@ Content-Type: multipart/form-data
 ```
 
 **Descrição**: Atualiza um evento existente (apenas criador ou admin).
+
+**Implementação**: Utiliza a mesma helper function de extração de FormData do endpoint POST.
 
 **Body (FormData)** - Todos os campos são opcionais:
 ```javascript

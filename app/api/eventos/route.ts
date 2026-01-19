@@ -11,6 +11,46 @@ import { getCoordinatesFromAddress } from "@/lib/utils/geocoding";
 import { saveUploadedFile, validateImageFile } from "@/lib/utils/file-upload";
 import { Prisma, CategoriaEvento, VisibilidadeEvento } from "@prisma/client";
 
+/**
+ * Helper para extrair dados do FormData de forma type-safe
+ */
+function extractEventoDataFromFormData(formData: FormData) {
+  const data: Record<string, string | string[] | null> = {};
+
+  const fields = [
+    "titulo",
+    "descricao",
+    "endereco",
+    "numero",
+    "cep",
+    "dataInicio",
+    "dataFim",
+    "visibilidade",
+    "categoria",
+    "linkYoutube",
+  ] as const;
+
+  fields.forEach((field) => {
+    if (formData.has(field)) {
+      const value = formData.get(field);
+      data[field] = value === "" ? null : (value as string);
+    }
+  });
+
+  // Processar array de participantes
+  if (formData.has("participantes")) {
+    try {
+      data.participantes = JSON.parse(
+        (formData.get("participantes") as string) || "[]",
+      );
+    } catch {
+      data.participantes = [];
+    }
+  }
+
+  return data;
+}
+
 // GET - Listar eventos (com filtros por visibilidade e categoria)
 export async function GET(request: NextRequest) {
   try {
@@ -95,21 +135,7 @@ export async function POST(request: NextRequest) {
 
     // Processar FormData (para suportar upload de imagem)
     const formData = await request.formData();
-    
-    // Extrair dados do formulário
-    const data = {
-      titulo: formData.get("titulo") as string,
-      descricao: formData.get("descricao") as string | null,
-      endereco: formData.get("endereco") as string,
-      numero: formData.get("numero") as string,
-      cep: formData.get("cep") as string,
-      dataInicio: formData.get("dataInicio") as string,
-      dataFim: formData.get("dataFim") as string,
-      visibilidade: formData.get("visibilidade") as string,
-      categoria: formData.get("categoria") as string,
-      linkYoutube: formData.get("linkYoutube") as string | null,
-      participantes: JSON.parse(formData.get("participantes") as string || "[]"),
-    };
+    const data = extractEventoDataFromFormData(formData);
 
     // Validar dados com Zod
     const validatedData = createEventoSchema.parse(data);

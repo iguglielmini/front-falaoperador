@@ -412,6 +412,101 @@ export type CreateTarefaInput = z.infer<typeof createTarefaSchema>;
 
 ---
 
+## � Processamento de FormData
+
+### Pattern: Helper Functions
+
+**Problema**: Repetição de código ao extrair dados de `FormData` em rotas com upload de arquivo.
+
+**Solução**: Criar função helper reutilizável no topo do arquivo de rota.
+
+### Exemplo de Implementação
+
+```typescript
+// app/api/eventos/route.ts
+
+/**
+ * Helper para extrair dados do FormData de forma type-safe
+ */
+function extractEventoDataFromFormData(formData: FormData) {
+  const data: Record<string, string | string[] | null> = {};
+
+  const fields = [
+    "titulo",
+    "descricao",
+    "endereco",
+    "numero",
+    "cep",
+    "dataInicio",
+    "dataFim",
+    "visibilidade",
+    "categoria",
+    "linkYoutube",
+  ] as const;
+
+  fields.forEach((field) => {
+    if (formData.has(field)) {
+      const value = formData.get(field);
+      data[field] = value === "" ? null : (value as string);
+    }
+  });
+
+  // Processar array de participantes
+  if (formData.has("participantes")) {
+    try {
+      data.participantes = JSON.parse(
+        (formData.get("participantes") as string) || "[]",
+      );
+    } catch {
+      data.participantes = [];
+    }
+  }
+
+  return data;
+}
+
+// Uso na rota
+export async function POST(request: NextRequest) {
+  const formData = await request.formData();
+  const data = extractEventoDataFromFormData(formData);
+  const validatedData = createEventoSchema.parse(data);
+  // ...
+}
+```
+
+### Benefícios
+
+1. **DRY (Don't Repeat Yourself)**
+   - Elimina 20+ linhas de if-statements repetitivos
+   - Reutilizável entre POST e PUT
+
+2. **Type Safety**
+   - Retorno consistente: `Record<string, string | string[] | null>`
+   - Array de campos com `as const`
+
+3. **Manutenibilidade**
+   - Adicionar novo campo: apenas atualizar array
+   - Lógica centralizada em um lugar
+
+4. **Tratamento de Erros**
+   - Parse seguro de JSON com try-catch
+   - Valores vazios convertidos para `null`
+
+### Quando Usar
+
+✅ **Use helper quando**:
+- Endpoint recebe `multipart/form-data`
+- 3+ campos precisam ser extraídos
+- Mesmo processamento em múltiplas rotas
+- Campos com arrays/JSON precisam de parse
+
+❌ **Não use helper quando**:
+- Endpoint recebe JSON simples (use `validateRequest`)
+- Apenas 1-2 campos simples
+- Lógica de extração é única
+
+---
+
 ## 🚀 Decisões Técnicas
 
 ### 1. Next.js App Router vs Pages Router

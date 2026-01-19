@@ -10,6 +10,46 @@ import {
 import { getCoordinatesFromAddress } from "@/lib/utils/geocoding";
 import { saveUploadedFile, validateImageFile } from "@/lib/utils/file-upload";
 
+/**
+ * Helper para extrair dados do FormData de forma type-safe
+ */
+function extractEventoDataFromFormData(formData: FormData) {
+  const data: Record<string, string | string[] | null> = {};
+
+  const fields = [
+    "titulo",
+    "descricao",
+    "endereco",
+    "numero",
+    "cep",
+    "dataInicio",
+    "dataFim",
+    "visibilidade",
+    "categoria",
+    "linkYoutube",
+  ] as const;
+
+  fields.forEach((field) => {
+    if (formData.has(field)) {
+      const value = formData.get(field);
+      data[field] = value === "" ? null : (value as string);
+    }
+  });
+
+  // Processar array de participantes
+  if (formData.has("participantes")) {
+    try {
+      data.participantes = JSON.parse(
+        (formData.get("participantes") as string) || "[]",
+      );
+    } catch {
+      data.participantes = [];
+    }
+  }
+
+  return data;
+}
+
 // GET - Buscar evento por ID
 export async function GET(
   request: NextRequest,
@@ -105,31 +145,7 @@ export async function PUT(
 
     // Processar FormData
     const formData = await request.formData();
-
-    const data: Record<string, string | string[] | null | undefined> = {};
-
-    if (formData.has("titulo")) data.titulo = formData.get("titulo") as string;
-    if (formData.has("descricao"))
-      data.descricao = formData.get("descricao") as string | null;
-    if (formData.has("endereco"))
-      data.endereco = formData.get("endereco") as string;
-    if (formData.has("numero")) data.numero = formData.get("numero") as string;
-    if (formData.has("cep")) data.cep = formData.get("cep") as string;
-    if (formData.has("dataInicio"))
-      data.dataInicio = formData.get("dataInicio") as string;
-    if (formData.has("dataFim"))
-      data.dataFim = formData.get("dataFim") as string;
-    if (formData.has("visibilidade"))
-      data.visibilidade = formData.get("visibilidade") as string;
-    if (formData.has("categoria"))
-      data.categoria = formData.get("categoria") as string;
-    if (formData.has("linkYoutube"))
-      data.linkYoutube = formData.get("linkYoutube") as string | null;
-    if (formData.has("participantes")) {
-      data.participantes = JSON.parse(
-        (formData.get("participantes") as string) || "[]",
-      );
-    }
+    const data = extractEventoDataFromFormData(formData);
 
     // Validar dados
     const validatedData = updateEventoSchema.parse(data);
