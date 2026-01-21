@@ -36,6 +36,10 @@ export const createUserSchema = z.object({
     .transform((val) => new Date(val)),
 
   perfil: z.nativeEnum(PerfilUsuario).optional().default(PerfilUsuario.USUARIO),
+  
+  foto: z
+    .string()
+    .optional(), // Será adicionada pelo backend após upload
 });
 
 // Schema para atualização de usuário
@@ -78,6 +82,10 @@ export const updateUserSchema = z.object({
     .optional(),
 
   perfil: z.nativeEnum(PerfilUsuario).optional(),
+  
+  foto: z
+    .string()
+    .optional(),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;

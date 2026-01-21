@@ -10,11 +10,13 @@ import {
   Settings,
   LogOut,
   Radio,
+  Building2,
 } from "lucide-react";
 import { signOut } from "@/lib/auth-client";
 import { TarefasProvider } from "@/contexts/TarefasContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { EventosProvider } from "@/contexts/EventosContext";
+import { PatrocinadoresProvider } from "@/contexts/PatrocinadoresContext";
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +37,7 @@ const menuItems = [
   { href: "/dashboard/usuarios", label: "Usuários", icon: Users },
   { href: "/dashboard/eventos", label: "Eventos", icon: Calendar },
   { href: "/dashboard/tarefas", label: "Tarefas", icon: CheckSquare },
+  { href: "/dashboard/patrocinadores", label: "Patrocinadores", icon: Building2 },
   { href: "/dashboard/configuracao", label: "Configuração", icon: Settings },
 ];
 
@@ -56,6 +59,7 @@ export default function DashboardLayout({
     <TarefasProvider>
       <UserProvider>
         <EventosProvider>
+          <PatrocinadoresProvider>
           <SidebarProvider>
           <Sidebar>
             <SidebarHeader>
@@ -126,8 +130,7 @@ export default function DashboardLayout({
             </header>
             <div className="flex flex-1 flex-col">{children}</div>
         </SidebarInset>
-      </SidebarProvider>
-      </EventosProvider>
+      </SidebarProvider>      </PatrocinadoresProvider>      </EventosProvider>
     </UserProvider>
   </TarefasProvider>
   );
