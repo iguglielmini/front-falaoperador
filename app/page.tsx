@@ -104,7 +104,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Header */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 animate-fade-in-down">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-orbitron font-bold mb-4 tracking-wide">
                 EPISÓDIO RECENTE
               </h2>
@@ -114,7 +114,7 @@ export default function Home() {
             </div>
 
             {/* Video Container */}
-            <div className="relative aspect-video bg-navy-light border-2 border-sand/20 overflow-hidden group hover:border-sand/40 transition-all duration-300">
+            <div className="relative aspect-video bg-navy-light border-2 border-sand/20 overflow-hidden group hover:border-sand/40 transition-all duration-300 animate-fade-in-up animate-delay-100">
               {/* YouTube Embed */}
               <iframe
                 className="absolute inset-0 w-full h-full"
@@ -132,7 +132,7 @@ export default function Home() {
             </div>
 
             {/* Episode Info */}
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center animate-fade-in animate-delay-200">
               <a
                 href="https://youtube.com/@FalaOperadorPodcast"
                 target="_blank"
@@ -154,7 +154,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Section Header */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 animate-fade-in-down">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-orbitron font-bold mb-4 tracking-wide">
                 EVENTOS
               </h2>
@@ -164,10 +164,12 @@ export default function Home() {
             </div>
 
             {/* Events Grid */}
-            <EventosCarousel />
+            <div className="animate-fade-in-up animate-delay-100">
+              <EventosCarousel />
+            </div>
 
             {/* CTA */}
-            <div className="text-center mt-8">
+            <div className="text-center mt-8 animate-fade-in animate-delay-200">
               <Link href="/dashboard/eventos">
                 <Button variant="outline" size="lg" className="gap-3">
                   <Calendar className="w-5 h-5" />

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
@@ -215,8 +216,13 @@ export function TarefasTable({ tarefas, onDelete }: TarefasTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentTarefas.map((tarefa, index) => (
-              <TableRow key={tarefa.id}>
+            {currentTarefas.map((tarefa, index) => {
+              const delay = Math.min(index * 50, 500);
+              return (
+                <TableRow 
+                  key={tarefa.id}
+                  className={`animate-fade-in-left${delay > 0 ? ` animate-delay-${delay}` : ''}`}
+                >
                 <TableCell className="font-medium text-muted-foreground">
                   {startIndex + index + 1}
                 </TableCell>
@@ -298,8 +304,9 @@ export function TarefasTable({ tarefas, onDelete }: TarefasTableProps) {
                     </Button>
                   </div>
                 </TableCell>
-              </TableRow>
-            ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
 

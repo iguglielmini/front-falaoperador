@@ -165,9 +165,13 @@ export function EventosTable({
           <TableBody>
             {currentEventos.map((evento, index) => {
               const sequentialId = startIndex + index + 1;
+              const delay = Math.min(index * 50, 500);
 
               return (
-                <TableRow key={evento.id}>
+                <TableRow 
+                  key={evento.id}
+                  className={`animate-fade-in-left${delay > 0 ? ` animate-delay-${delay}` : ''}`}
+                >
                   <TableCell className="font-medium text-muted-foreground">
                     #{sequentialId.toString().padStart(3, "0")}
                   </TableCell>

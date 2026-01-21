@@ -58,7 +58,7 @@ export default function LoginPage() {
         }}
       />
 
-      <TacticalCard className="w-full max-w-md mx-4 p-8 animate-fade-in">
+      <TacticalCard className="w-full max-w-md mx-4 p-8 animate-fade-in-up">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="relative w-16 h-16 mx-auto mb-4">

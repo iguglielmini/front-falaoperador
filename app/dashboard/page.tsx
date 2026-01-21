@@ -90,7 +90,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 animate-fade-in-down">
         <h1 className="text-3xl font-orbitron font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
           Bem-vindo(a), {user?.nome}! Aqui está um resumo do sistema.
@@ -99,7 +99,7 @@ export default function DashboardPage() {
 
       {/* Section 1: Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="p-6">
+        <Card className="p-6 animate-fade-in-up">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               Total de Usuários
@@ -110,7 +110,7 @@ export default function DashboardPage() {
           <p className="text-xs text-muted-foreground">Cadastrados no sistema</p>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 animate-fade-in-up animate-delay-100">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               Total de Eventos
@@ -123,7 +123,7 @@ export default function DashboardPage() {
           </p>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 animate-fade-in-up animate-delay-200">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               Total de Tarefas
@@ -136,7 +136,7 @@ export default function DashboardPage() {
           </p>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 animate-fade-in-up animate-delay-300">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               Taxa de Conclusão
@@ -151,7 +151,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Section 2: Próximos Eventos */}
-      <Card className="p-6 mb-8">
+      <Card className="p-6 mb-8 animate-fade-in-up animate-delay-100">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Calendar className="w-5 h-5 text-sand" />
@@ -236,7 +236,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Section 3: Tarefas Ativas (Em Progresso ou Pendente) */}
-      <Card className="p-6">
+      <Card className="p-6 animate-fade-in-up animate-delay-200">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <CheckSquare className="w-5 h-5 text-sand" />

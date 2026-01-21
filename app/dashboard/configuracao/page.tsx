@@ -66,7 +66,7 @@ export default function ConfiguracaoPage() {
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 animate-fade-in-down">
         <div className="flex items-center gap-3 mb-2">
           <Settings className="w-8 h-8 text-sand" />
           <h1 className="text-3xl font-orbitron font-bold">Configuração</h1>
@@ -78,7 +78,7 @@ export default function ConfiguracaoPage() {
 
       <div className="w-full">
         {/* User Profile Card */}
-        <Card className="p-6 mb-6">
+        <Card className="p-6 mb-6 animate-fade-in-up">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-20 h-20 rounded-full bg-sand/20 flex items-center justify-center">
               <User className="w-10 h-10 text-sand" />

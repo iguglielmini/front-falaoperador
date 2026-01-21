@@ -86,7 +86,7 @@ export default function UsuariosPage() {
   return (
     <div className="p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 animate-fade-in-down">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
             <Users className="w-8 h-8 text-sand" />
@@ -100,7 +100,7 @@ export default function UsuariosPage() {
       </div>
 
       {/* Users List */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden animate-fade-in-up">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-muted/50 border-b border-border">
@@ -136,8 +136,13 @@ export default function UsuariosPage() {
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
-                  <tr key={user.id} className="hover:bg-muted/30 transition-colors">
+                users.map((user, index) => {
+                  const delay = Math.min(index * 50, 500);
+                  return (
+                  <tr 
+                    key={user.id} 
+                    className={`hover:bg-muted/30 transition-colors animate-fade-in-left${delay > 0 ? ` animate-delay-${delay}` : ''}`}
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-sand/20 flex items-center justify-center">
@@ -194,7 +199,8 @@ export default function UsuariosPage() {
                       </div>
                     </td>
                   </tr>
-                ))
+                );
+                })
               )}
             </tbody>
           </table>
