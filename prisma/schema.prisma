@@ -160,3 +160,17 @@ model Verification {
   @@unique([identifier, value])
   @@map("verifications")
 }
+
+model Patrocinador {
+  id           String   @id @default(uuid())
+  nomeEmpresa  String
+  links        String   // JSON array de URLs
+  telefone     String?
+  email        String?
+  endereco     String?
+  imagem       String   // Caminho para a imagem
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("patrocinadores")
+}
