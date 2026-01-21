@@ -58,10 +58,6 @@ export async function GET(
   try {
     const session = await auth.api.getSession({ headers: request.headers });
 
-    if (!session?.user) {
-      return errorResponse("Não autenticado", 401);
-    }
-
     const { id } = await params;
 
     const evento = await prisma.evento.findUnique({
@@ -94,7 +90,15 @@ export async function GET(
       return errorResponse("Evento não encontrado", 404);
     }
 
-    // Verificar permissão de visualização
+    // Se não autenticado, só pode ver eventos públicos
+    if (!session?.user) {
+      if (evento.visibilidade !== "PUBLICA") {
+        return errorResponse("Não autenticado", 401);
+      }
+      return successResponse(evento);
+    }
+
+    // Verificar permissão de visualização para usuários autenticados
     const isParticipante = evento.participantes.some(
       (p) => p.userId === session.user.id,
     );

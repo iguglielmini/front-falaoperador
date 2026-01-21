@@ -56,10 +56,6 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
 
-    if (!session?.user) {
-      return errorResponse("Não autenticado", 401);
-    }
-
     const { searchParams } = new URL(request.url);
     const categoria = searchParams.get("categoria");
     const visibilidade = searchParams.get("visibilidade");
@@ -71,8 +67,12 @@ export async function GET(request: NextRequest) {
       whereClause.categoria = categoria as CategoriaEvento;
     }
 
+    // Se não autenticado, retorna apenas eventos públicos
+    if (!session?.user) {
+      whereClause.visibilidade = "PUBLICA";
+    }
     // Usuário comum vê apenas eventos públicos + eventos privados onde é participante ou criador
-    if (session.user.perfil !== "ADMIN") {
+    else if (session.user.perfil !== "ADMIN") {
       whereClause.OR = [
         { visibilidade: "PUBLICA" },
         { criadorId: session.user.id },
